@@ -56,11 +56,9 @@ jobs:
         env:
           FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 120
         
-      - name: Create DMG
-        shell: bash
+      - name: Create DMG manually
         run: |
-          create-dmg --identity="" ./output/PlayCover.app ./output
-          mv ./output/*.dmg ./output/PlayCover_nightly_${{ github.run_number }}.dmg
+          hdiutil create -volname "PlayCover" -srcfolder ./output/PlayCover.app -ov -format UDZO ./output/PlayCover_nightly_${{ github.run_number }}.dmg
 
       - name: Clean Up
         shell: bash
