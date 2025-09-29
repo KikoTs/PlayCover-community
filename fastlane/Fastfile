@@ -45,7 +45,6 @@ end
 
 lane :nightly do
   setup_ci if ENV['CI']
-  #match(type: "developer_id", readonly: true)
   Dir.chdir("..") do
     sh("carthage", "update", "--use-xcframeworks")
   end
@@ -58,8 +57,8 @@ lane :nightly do
     export_method: "developer-id",
     destination: "generic/platform=macOS",
     skip_package_pkg: true,
-    xcargs: "FASTLANE=1",
-    )
+    xcargs: "FASTLANE=1 CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=JBBQPJL8RL"
+  )
 end
 
 lane :notarize_app do
