@@ -38,13 +38,27 @@ jobs:
         run: |
           fastlane run increment_build_number build_number:${{ github.run_number }}
 
+      - name: Install signing cert and profile
+        run: |
+          echo "$MACOS_CERT_P12" | base64 --decode > cert.p12
+          echo "$MACOS_PROFILE" | base64 --decode > profile.mobileprovision
+          security create-keychain -p "" build.keychain
+          security import cert.p12 -k ~/Library/Keychains/build.keychain -P "$MACOS_CERT_PASSWORD" -T /usr/bin/codesign
+          security list-keychains -s ~/Library/Keychains/build.keychain
+          security default-keychain -s ~/Library/Keychains/build.keychain
+          security unlock-keychain -p "" ~/Library/Keychains/build.keychain
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+        env:
+          MACOS_CERT_P12: ${{ secrets.MACOS_CERT_P12 }}
+          MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+          MACOS_PROFILE: ${{ secrets.MACOS_PROFILE }}
+
       - name: Fastlane Nightly
         shell: bash
         run: fastlane nightly
         env:
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 120 # x86 is slooooooow
+          FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 120
 
       - name: Exract API_KEY
         shell: bash
