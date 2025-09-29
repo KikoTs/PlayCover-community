@@ -60,10 +60,6 @@ jobs:
         run: |
           hdiutil create -volname "PlayCover" -srcfolder ./output/PlayCover.app -ov -format UDZO ./output/PlayCover_nightly_${{ github.run_number }}.dmg
 
-      - name: Clean Up
-        shell: bash
-        run: rm apikey.json
-
       - name: Upload Artifact
         uses: actions/upload-artifact@v4.3.0
         with:
