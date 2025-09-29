@@ -305,6 +305,7 @@ class PlayApp: BaseApp {
     }
 
     static let PROHIBITED_APPS = [
+        "cons.fa"
     ]
 
     static let MALICIOUS_APPS = [
